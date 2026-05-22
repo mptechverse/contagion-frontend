@@ -17,7 +17,7 @@ export default function QuemSomos() {
           viewport={{ once: true, amount: 0.3 }}
         >
           <img
-            src="/images/quemSomos.PNG"
+            src="/images/quemSomos.jpg"
             alt="Quem Somos"
             className="w-full h-auto rounded-lg shadow-lg object-cover"
           />

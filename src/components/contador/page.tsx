@@ -6,6 +6,8 @@ import { oswald, inter } from "@/lib/fonts";
 import { motion, Variants } from "framer-motion";
 
 export default function ContadorPage() {
+  const [mounted, setMounted] = useState(false);
+
   const dataEvento = new Date("2026-08-28T00:00:00");
 
   const calcularTempo = () => {
@@ -20,37 +22,63 @@ export default function ContadorPage() {
 
     return {
       meses: Math.floor(segundosTotal / (60 * 60 * 24 * 30)),
+
       dias: Math.floor(
         (segundosTotal % (60 * 60 * 24 * 30)) / (60 * 60 * 24)
       ),
+
       minutos: Math.floor((segundosTotal % 3600) / 60),
+
       segundos: segundosTotal % 60,
     };
   };
 
-  const [tempo, setTempo] = useState(calcularTempo());
+  const [tempo, setTempo] = useState({
+    meses: 0,
+    dias: 0,
+    minutos: 0,
+    segundos: 0,
+  });
 
   useEffect(() => {
-    const intervalo = setInterval(() => {
+    setMounted(true);
+
+    const atualizarContador = () => {
       setTempo(calcularTempo());
+    };
+
+    atualizarContador();
+
+    const intervalo = setInterval(() => {
+      atualizarContador();
     }, 1000);
 
     return () => clearInterval(intervalo);
   }, []);
 
+  /* ================= EVITA HYDRATION ERROR ================= */
+
+  if (!mounted) return null;
+
   /* ================= ANIMAÇÕES ================= */
 
   const fadeUp: Variants = {
     hidden: { opacity: 0, y: 70 },
+
     show: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: "easeOut" },
+
+      transition: {
+        duration: 0.8,
+        ease: "easeOut",
+      },
     },
   };
 
   const container: Variants = {
     hidden: {},
+
     show: {
       transition: {
         staggerChildren: 0.2,
@@ -78,6 +106,7 @@ export default function ContadorPage() {
       "
     >
       {/* TITULO */}
+
       <motion.h1
         variants={fadeUp}
         className={`
@@ -95,6 +124,7 @@ export default function ContadorPage() {
       </motion.h1>
 
       {/* CONTADOR */}
+
       <motion.div
         variants={fadeUp}
         className={`
@@ -108,12 +138,16 @@ export default function ContadorPage() {
         `}
       >
         <Card valor={tempo.meses} label="MESES" />
+
         <Card valor={tempo.dias} label="DIAS" />
+
         <Card valor={tempo.minutos} label="MINUTOS" />
+
         <Card valor={tempo.segundos} label="SEGUNDOS" />
       </motion.div>
 
       {/* GRID */}
+
       <motion.div
         variants={container}
         className={`
@@ -222,10 +256,14 @@ function InfoCard({
     <motion.div
       variants={{
         hidden: { opacity: 0, y: 60 },
+
         show: {
           opacity: 1,
           y: 0,
-          transition: { duration: 0.6 },
+
+          transition: {
+            duration: 0.6,
+          },
         },
       }}
       className="
