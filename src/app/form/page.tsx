@@ -1,12 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion, Variants } from "framer-motion";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Copy, Check } from "lucide-react";
 import { inter, oswald } from "@/lib/fonts";
 
 export default function Formulario() {
+
+  const [copiado, setCopiado] = useState(false);
+
+  const chavePix = "contagion@pix.com.br";
 
   const {
     register,
@@ -16,17 +21,46 @@ export default function Formulario() {
 
   const participaIgreja = watch("igreja");
 
+  const tipoSelecionado = watch("tipo");
+
+  const valorInscricao =
+    tipoSelecionado === "servo"
+      ? "R$ 100,00"
+      : tipoSelecionado === "primeira_vez"
+      ? "R$ 150,00"
+      : "Selecione o tipo de inscrição";
+
+  async function copiarPix() {
+
+    try {
+
+      await navigator.clipboard.writeText(chavePix);
+
+      setCopiado(true);
+
+      setTimeout(() => {
+        setCopiado(false);
+      }, 2000);
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert("Erro ao copiar chave PIX");
+    }
+  }
+
   async function onSubmit(data: any) {
 
     try {
 
       const response = await fetch(
-        'http://127.0.0.1:8000/api/inscricoes/',
+        "http://127.0.0.1:8000/api/inscricoes/",
         {
-          method: 'POST',
+          method: "POST",
 
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
 
           body: JSON.stringify({
@@ -43,7 +77,7 @@ export default function Formulario() {
 
             igreja: data.igreja
               ? data.nomeIgreja
-              : '',
+              : "",
 
             cidade: data.cidade,
 
@@ -55,33 +89,33 @@ export default function Formulario() {
 
             participa_igreja: data.igreja || false,
 
-            pastor_lider: data.lider || '',
+            pastor_lider: data.lider || "",
 
-            telefone_lider: data.telefoneLider || '',
+            telefone_lider: data.telefoneLider || "",
 
-            tempo_igreja: data.tempoIgreja || '',
+            tempo_igreja: data.tempoIgreja || "",
 
             responsavel_nome: data.emergenciaNome,
 
             telefone_responsavel: data.emergenciaTel,
 
-            parentesco: data.relacao || '',
+            parentesco: data.relacao || "",
 
-            alergias: data.alergias || '',
+            alergias: data.alergias || "",
 
-            doencas_pre_existentes: data.doencas || '',
+            doencas_pre_existentes: data.doencas || "",
 
-            medicamentos_continuos: data.medicamentos || '',
+            medicamentos_continuos: data.medicamentos || "",
 
-            restricoes_alimentares: data.restricoes || '',
+            restricoes_alimentares: data.restricoes || "",
 
-            observacoes_medicas: data.obsMedicas || '',
+            observacoes_medicas: data.obsMedicas || "",
 
-            como_conheceu: data.origem || '',
+            como_conheceu: data.origem || "",
 
             autoriza_imagem: data.imagem || false,
 
-          })
+          }),
         }
       );
 
@@ -91,7 +125,7 @@ export default function Formulario() {
 
         console.log(erro);
 
-        alert('Erro ao enviar inscrição');
+        alert("Erro ao enviar inscrição");
 
         return;
       }
@@ -100,13 +134,13 @@ export default function Formulario() {
 
       console.log(resultado);
 
-      alert('Inscrição realizada com sucesso!');
+      alert("Inscrição realizada com sucesso!");
 
     } catch (error) {
 
       console.error(error);
 
-      alert('Erro na conexão com o servidor');
+      alert("Erro na conexão com o servidor");
     }
   }
 
@@ -558,6 +592,123 @@ export default function Formulario() {
 
         </motion.div>
 
+        
+
+        {/* ======================
+           PAGAMENTO
+        =======================*/}
+
+        <motion.div
+          variants={fadeUp}
+          className="bg-neutral-800/60 p-8 rounded-2xl space-y-6 border border-[#ffc700]/20"
+        >
+
+          <h2 className={`${oswald.className} text-2xl text-[#ffc700]`}>
+            Pagamento da inscrição
+          </h2>
+
+          <div className="  rounded-xl p-6 space-y-6">
+
+            <div>
+
+              <p className="text-neutral-300 leading-relaxed">
+                Mande o valor correspondente da inscrição para o PIX abaixo:
+              </p>
+
+            </div>
+
+            <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5">
+
+              <p className="text-sm text-neutral-400 mb-2">
+                Valor da inscrição
+              </p>
+
+              <p className="text-3xl font-bold text-[#ffc700]">
+                {valorInscricao}
+              </p>
+
+            </div>
+
+            <div>
+
+              <p className="text-sm text-neutral-400 mb-2">
+                Chave PIX
+              </p>
+
+              <div className="flex flex-col md:flex-row gap-3">
+
+                <div
+                  className="
+                    flex-1
+                    bg-neutral-900
+                    border
+                    border-neutral-700
+                    rounded-lg
+                    px-4
+                    py-3
+                    break-all
+                  "
+                >
+                  {chavePix}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={copiarPix}
+                  className="
+                    bg-[#ffc700]
+                    text-black
+                    font-bold
+                    px-5
+                    py-3
+                    rounded-lg
+                    hover:scale-105
+                    transition
+                    flex
+                    items-center
+                    justify-center
+                    gap-2
+                  "
+                >
+
+                  {copiado ? (
+                    <>
+                      <Check size={18} />
+                      Copiado
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={18} />
+                      Copiar
+                    </>
+                  )}
+
+                </button>
+
+              </div>
+
+            </div>
+
+            <div className="bg-[#ffc700]/10 border border-[#ffc700]/20 rounded-xl p-4">
+
+              <p className="text-neutral-200 leading-relaxed">
+               Após realizar o pagamento, envie:<br/>
+                • o comprovante<br/>
+                • seu nome completo<br/><br/>
+
+                para o número abaixo:
+              </p>
+
+              <p className="text-[#ffc700] font-bold mt-2 text-lg">
+                (83) 91234-5678
+              </p>
+
+            </div>
+
+          </div>
+
+        </motion.div>
+
         {/* AUTORIZAÇÕES */}
         <motion.div
           variants={fadeUp}
@@ -588,7 +739,6 @@ export default function Formulario() {
           </label>
 
         </motion.div>
-
         {/* BOTÃO */}
         <motion.button
           variants={fadeUp}
@@ -608,6 +758,7 @@ export default function Formulario() {
         >
           GARANTIR MINHA VAGA
         </motion.button>
+
 
       </motion.form>
     </div>

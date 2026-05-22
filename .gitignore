@@ -1,7 +1,10 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+# ============================================
+# DEPENDENCIES
+# ============================================
 /node_modules
+/vendor
 /.pnp
 .pnp.*
 .yarn/*
@@ -9,33 +12,160 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+.yarn/install-state.gz
 
-# testing
-/coverage
-
-# next.js
+# ============================================
+# NEXT.JS
+# ============================================
 /.next/
 /out/
+/build/
+.next
+next-env.d.ts
+*.tsbuildinfo
 
-# production
-/build
+# ============================================
+# PRODUCTION & BUILD
+# ============================================
+/dist
+/.cache
+/coverage
 
-# misc
-.DS_Store
-*.pem
+# ============================================
+# ENVIRONMENT VARIABLES
+# ============================================
+.env
+.env.local
+.env.*.local
+.env.production.local
+.env.development.local
+.env.test.local
+.env.*.private
 
-# debug
+# ============================================
+# LOGS
+# ============================================
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+lerna-debug.log*
+*.log.gz
 
-# env files (can opt-in for committing if needed)
-.env*
+# ============================================
+# RUNTIME DATA
+# ============================================
+pids
+*.pid
+*.seed
+*.pid.lock
+.lock
 
-# vercel
+# ============================================
+# TESTING
+# ============================================
+/coverage
+.nyc_output
+/test-results
+*.coverage
+
+# ============================================
+# OS SPECIFIC
+# ============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode-test
+.cache
+.cache-loader
+
+# ============================================
+# IDE & EDITOR
+# ============================================
+.vscode/*
+!.vscode/extensions.json
+.idea
+.idea_modules
+*.iml
+*.iws
+*.ipr
+.sublime-project
+.sublime-workspace
+*.sublime-settings
+*.sublime-project
+.atom
+.project
+.settings
+.classpath
+*.c9
+*.sw*
+*.sublime-workspace
+.DS_Store
+.AppleDouble
+.LSOverride
+.bundle
+
+# ============================================
+# DEPLOY & HOSTING
+# ============================================
+# Vercel
 .vercel
+.vercelignore
+# Netlify
+.netlify
+.netlify/functions-internal
+# Railway
+.railway
+# Heroku
+.env.production
+.env.*.production
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# ============================================
+# TEMPORARY FILES
+# ============================================
+*.tmp
+*.temp
+.tmp
+/tmp
+*.bak
+*.backup
+*.swp
+*.swo
+.turbo
+.turbopack
+dist-ssr
+*.orig
+
+# ============================================
+# MISC
+# ============================================
+*.pem
+*.key
+*.pub
+.editorconfig.local
+*.pid
+*.seed
+.env.local.php
+.tern-port
+.vuepress/dist
+npm-shrinkwrap.json
+package-lock.json.bak
+pnpm-lock.yaml.bak
+yarn.lock.bak
+
+# ============================================
+# SENSITIVE DATA
+# ============================================
+secrets/
+.secrets
+credentials
+.credentials
