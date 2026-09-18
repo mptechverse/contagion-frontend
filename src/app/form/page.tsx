@@ -55,7 +55,7 @@ export default function Formulario() {
 
     try {
       const response = await fetch(
-        "https://contagion-backend.onrender.com/api/inscricoes",
+        "https://contagion-backend.onrender.com/api/inscricoes/",
         {
           method: "POST",
           headers: {
