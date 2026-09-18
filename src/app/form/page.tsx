@@ -51,96 +51,61 @@ export default function Formulario() {
   }
 
   async function onSubmit(data: any) {
+    setLoading(true);
 
     try {
-
       const response = await fetch(
-        "https://contagion-backend.onrender.com",
+        "https://contagion-backend.onrender.com/api/inscricoes",
         {
           method: "POST",
-
           headers: {
             "Content-Type": "application/json",
           },
-
           body: JSON.stringify({
-
             tipo: data.tipo,
-
             nome_completo: data.nome,
-
             data_nascimento: data.nascimento,
-
             telefone: data.telefone,
-
             email: data.email,
-
-            igreja: data.igreja
-              ? data.nomeIgreja
-              : "",
-
+            igreja: data.igreja ? data.nomeIgreja : "",
             cidade: data.cidade,
-
             estado: data.estado,
-
             quer_servir: data.querServir || false,
-
             tamanho_camisa: data.camisa,
-
             participa_igreja: data.igreja || false,
-
             pastor_lider: data.lider || "",
-
             telefone_lider: data.telefoneLider || "",
-
             tempo_igreja: data.tempoIgreja || "",
-
             responsavel_nome: data.emergenciaNome,
-
             telefone_responsavel: data.emergenciaTel,
-
             parentesco: data.relacao || "",
-
             alergias: data.alergias || "",
-
             doencas_pre_existentes: data.doencas || "",
-
             medicamentos_continuos: data.medicamentos || "",
-
             restricoes_alimentares: data.restricoes || "",
-
             observacoes_medicas: data.obsMedicas || "",
-
             como_conheceu: data.origem || "",
-
             autoriza_imagem: data.imagem || false,
-
           }),
         }
       );
 
       if (!response.ok) {
-
-        const erro = await response.json();
-
-        console.log(erro);
-
-        alert("Erro ao enviar inscrição");
-
+        const erroText = await response.text();
+        console.error("Erro da API:", erroText);
+        alert("Erro ao enviar inscrição. Tente novamente.");
         return;
       }
 
       const resultado = await response.json();
-
-      console.log(resultado);
+      console.log("Inscrição criada com sucesso:", resultado);
 
       alert("Inscrição realizada com sucesso!");
-
     } catch (error) {
-
       console.error(error);
-
       alert("Erro na conexão com o servidor");
+    } finally {
+      setLoading(false);
     }
   }
 
