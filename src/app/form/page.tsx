@@ -7,9 +7,38 @@ import Link from "next/link";
 import { ArrowLeft, Copy, Check } from "lucide-react";
 import { inter, oswald } from "@/lib/fonts";
 
+type FormValues = {
+  tipo: string;
+  nome: string;
+  nascimento: string;
+  telefone: string;
+  email: string;
+  nomeIgreja?: string;
+  igreja?: boolean;
+  cidade: string;
+  estado: string;
+  querServir?: boolean;
+  camisa: string;
+  lider?: string;
+  telefoneLider?: string;
+  tempoIgreja?: string;
+  emergenciaNome: string;
+  emergenciaTel: string;
+  relacao?: string;
+  alergias?: string;
+  doencas?: string;
+  medicamentos?: string;
+  restricoes?: string;
+  obsMedicas?: string;
+  origem?: string;
+  termos: boolean;
+  imagem?: boolean;
+};
+
 export default function Formulario() {
 
   const [copiado, setCopiado] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const chavePix = "contagion@pix.com.br";
 
@@ -17,7 +46,7 @@ export default function Formulario() {
     register,
     handleSubmit,
     watch,
-  } = useForm();
+  } = useForm<FormValues>();
 
   const participaIgreja = watch("igreja");
 
@@ -50,7 +79,7 @@ export default function Formulario() {
     }
   }
 
-  async function onSubmit(data: any) {
+  async function onSubmit(data: FormValues) {
     setLoading(true);
 
     try {
@@ -708,6 +737,7 @@ export default function Formulario() {
         <motion.button
           variants={fadeUp}
           type="submit"
+          disabled={loading}
           className={`
             ${inter.className}
             bg-[#ffc700]
@@ -719,9 +749,11 @@ export default function Formulario() {
             text-lg
             hover:scale-105
             transition
+            disabled:cursor-not-allowed
+            disabled:opacity-60
           `}
         >
-          GARANTIR MINHA VAGA
+          {loading ? "ENVIANDO..." : "GARANTIR MINHA VAGA"}
         </motion.button>
 
 
