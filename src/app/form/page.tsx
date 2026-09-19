@@ -84,7 +84,7 @@ export default function Formulario() {
 
     try {
       const response = await fetch(
-        "https://contagion-backend.onrender.com/api/inscricoes/",
+        "https://contagion-backend.onrender.com/api/inscricoes",
         {
           method: "POST",
           headers: {
@@ -122,7 +122,11 @@ export default function Formulario() {
       if (!response.ok) {
         const erroText = await response.text();
         console.error("Erro da API:", erroText);
-        alert("Erro ao enviar inscrição. Tente novamente.");
+        alert(
+          `Erro ao enviar inscrição (${response.status}). ${
+            erroText || "Verifique os dados enviados."
+          }`
+        );
         return;
       }
 
