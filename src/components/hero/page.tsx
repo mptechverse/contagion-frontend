@@ -4,8 +4,10 @@ import { inter, oswald } from "@/lib/fonts";
 import Link from "next/link";
 import { Flame } from "lucide-react";
 import { motion, Variants } from "framer-motion";
+import { useEventoAtivo } from "@/lib/use-evento-ativo";
 
 export default function Hero() {
+  const eventoAtivo = useEventoAtivo();
 
   // animação individual (baixo → cima)
   const fadeUp: Variants = {
@@ -117,8 +119,9 @@ export default function Hero() {
           variants={fadeUp}
           className="w-full flex justify-center"
         >
-          <Link href="/form" className="w-full sm:w-auto">
-            <button
+          {eventoAtivo ? (
+            <Link
+              href="/form"
               className={`
                 ${inter.className}
                 font-bold
@@ -140,8 +143,31 @@ export default function Hero() {
             >
               <Flame size={22} />
               QUERO VIVER MEU MELHOR FINAL DE SEMANA!
+            </Link>
+          ) : (
+            <button
+              type="button"
+              disabled
+              className={`
+                ${inter.className}
+                font-bold
+                text-white
+                bg-neutral-700
+                w-full sm:w-auto
+                px-6 sm:px-[40px]
+                py-4 sm:py-[20px]
+                flex items-center justify-center
+                gap-3
+                rounded-lg
+                mb-6 sm:mb-[30px]
+                text-sm sm:text-base
+                cursor-not-allowed
+              `}
+            >
+              <Flame size={22} />
+              EM BREVE
             </button>
-          </Link>
+          )}
         </motion.div>
 
         {/* DATA */}

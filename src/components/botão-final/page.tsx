@@ -4,8 +4,10 @@ import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import { Swords } from "lucide-react";
 import { inter, oswald } from "@/lib/fonts";
+import { useEventoAtivo } from "@/lib/use-evento-ativo";
 
 export default function Final() {
+  const eventoAtivo = useEventoAtivo();
 
   /* ======================
      VARIANTS
@@ -82,15 +84,16 @@ export default function Final() {
           className={`${inter.className}
           text-neutral-300 max-w-2xl text-base md:text-lg leading-relaxed`}
         >
-          Início em <span className="text-[#ffc700] font-semibold">28 de agosto</span>.
+          
           Um final de semana preparado para transformar sua caminhada.
           <span className="text-[#ffc700] font-semibold"> Vagas limitadas.</span>
         </motion.p>
 
         {/* BOTÃO */}
         <motion.div variants={fadeUp}>
-          <Link href="/form">
-            <button
+          {eventoAtivo ? (
+            <Link
+              href="/form"
               className={`
                 ${inter.className}
                 font-semibold
@@ -109,8 +112,27 @@ export default function Final() {
             >
               <Swords size={22} />
               QUERO ME FORTALECER
+            </Link>
+          ) : (
+            <button
+              type="button"
+              disabled
+              className={`
+                ${inter.className}
+                font-semibold
+                bg-neutral-700
+                text-white
+                px-10 py-5
+                rounded-xl
+                flex items-center gap-3
+                text-lg
+                cursor-not-allowed
+              `}
+            >
+              <Swords size={22} />
+              EM BREVE
             </button>
-          </Link>
+          )}
         </motion.div>
 
       </motion.div>

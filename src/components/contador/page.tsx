@@ -36,6 +36,7 @@ export default function ContadorPage() {
   const [mounted, setMounted] = useState(false);
   const [dataEvento, setDataEvento] = useState<Date | null>(null);
   const [erroEvento, setErroEvento] = useState(false);
+  const [eventoIndisponivel, setEventoIndisponivel] = useState(false);
   const [tempo, setTempo] = useState({
     meses: 0,
     dias: 0,
@@ -50,6 +51,11 @@ export default function ContadorPage() {
     async function carregarEvento() {
       try {
         const response = await fetch(EVENTO_API_URL);
+        if (response.status === 404) {
+          if (ativo) setEventoIndisponivel(true);
+          return;
+        }
+
         if (!response.ok) {
           throw new Error(`Erro ao buscar evento: ${response.status}`);
         }
@@ -187,7 +193,9 @@ export default function ContadorPage() {
           <p className="text-neutral-400">
             {erroEvento
               ? "Não foi possível carregar a data do evento."
-              : "Carregando data do evento..."}
+              : eventoIndisponivel
+                ? "EM BREVE"
+                : "Carregando data do evento..."}
           </p>
         )}
       </motion.div>
@@ -216,9 +224,15 @@ export default function ContadorPage() {
                   month: "long",
                   timeZone: "America/Sao_Paulo",
                 }).format(dataEvento)
-              : "Data do evento"
+              : eventoIndisponivel
+                ? "EM BREVE"
+                : "Data do evento"
           }
-          descricao="Data definida para o evento"
+          descricao={
+            eventoIndisponivel
+              ? "Aguarde a divulgação da próxima data"
+              : "Data definida para o evento"
+          }
         />
 
         <InfoCard
