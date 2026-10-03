@@ -5,34 +5,37 @@ import { Calendar, MapPin, CreditCard, Users } from "lucide-react";
 import { oswald, inter } from "@/lib/fonts";
 import { motion, Variants } from "framer-motion";
 
+const EVENTO_API_URL =
+  "https://contagion-backend.onrender.com/api/inscricoes/evento/";
+
+function extrairDataEvento(payload: unknown): Date | null {
+  const evento = Array.isArray(payload)
+    ? payload.find(
+        (item) =>
+          typeof item === "object" &&
+          item !== null &&
+          "ativo" in item &&
+          item.ativo === true
+      )
+    : payload;
+
+  if (
+    typeof evento !== "object" ||
+    evento === null ||
+    !("data_evento" in evento) ||
+    typeof evento.data_evento !== "string"
+  ) {
+    return null;
+  }
+
+  const data = new Date(evento.data_evento);
+  return Number.isNaN(data.getTime()) ? null : data;
+}
+
 export default function ContadorPage() {
   const [mounted, setMounted] = useState(false);
-
-  const dataEvento = new Date("2026-11-22T00:00:00");
-
-  const calcularTempo = () => {
-    const agora = new Date().getTime();
-    const diferenca = dataEvento.getTime() - agora;
-
-    if (diferenca <= 0) {
-      return { meses: 0, dias: 0, minutos: 0, segundos: 0 };
-    }
-
-    const segundosTotal = Math.floor(diferenca / 1000);
-
-    return {
-      meses: Math.floor(segundosTotal / (60 * 60 * 24 * 30)),
-
-      dias: Math.floor(
-        (segundosTotal % (60 * 60 * 24 * 30)) / (60 * 60 * 24)
-      ),
-
-      minutos: Math.floor((segundosTotal % 3600) / 60),
-
-      segundos: segundosTotal % 60,
-    };
-  };
-
+  const [dataEvento, setDataEvento] = useState<Date | null>(null);
+  const [erroEvento, setErroEvento] = useState(false);
   const [tempo, setTempo] = useState({
     meses: 0,
     dias: 0,
@@ -41,20 +44,56 @@ export default function ContadorPage() {
   });
 
   useEffect(() => {
+    let ativo = true;
     setMounted(true);
 
+    async function carregarEvento() {
+      try {
+        const response = await fetch(EVENTO_API_URL);
+        if (!response.ok) {
+          throw new Error(`Erro ao buscar evento: ${response.status}`);
+        }
+
+        const data = extrairDataEvento(await response.json());
+        if (!data) {
+          throw new Error("A API não retornou uma data de evento válida.");
+        }
+
+        if (ativo) setDataEvento(data);
+      } catch (error) {
+        console.error(error);
+        if (ativo) setErroEvento(true);
+      }
+    };
+
+    void carregarEvento();
+
+    return () => {
+      ativo = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!dataEvento) return;
+
     const atualizarContador = () => {
-      setTempo(calcularTempo());
+      const diferenca = dataEvento.getTime() - Date.now();
+      const segundosTotal = Math.max(0, Math.floor(diferenca / 1000));
+
+      setTempo({
+        meses: Math.floor(segundosTotal / (60 * 60 * 24 * 30)),
+        dias: Math.floor(
+          (segundosTotal % (60 * 60 * 24 * 30)) / (60 * 60 * 24)
+        ),
+        minutos: Math.floor((segundosTotal % 3600) / 60),
+        segundos: segundosTotal % 60,
+      });
     };
 
     atualizarContador();
-
-    const intervalo = setInterval(() => {
-      atualizarContador();
-    }, 1000);
-
+    const intervalo = setInterval(atualizarContador, 1000);
     return () => clearInterval(intervalo);
-  }, []);
+  }, [dataEvento]);
 
   /* ================= EVITA HYDRATION ERROR ================= */
 
@@ -137,13 +176,20 @@ export default function ContadorPage() {
           w-full
         `}
       >
-        <Card valor={tempo.meses} label="MESES" />
-
-        <Card valor={tempo.dias} label="DIAS" />
-
-        <Card valor={tempo.minutos} label="MINUTOS" />
-
-        <Card valor={tempo.segundos} label="SEGUNDOS" />
+        {dataEvento ? (
+          <>
+            <Card valor={tempo.meses} label="MESES" />
+            <Card valor={tempo.dias} label="DIAS" />
+            <Card valor={tempo.minutos} label="MINUTOS" />
+            <Card valor={tempo.segundos} label="SEGUNDOS" />
+          </>
+        ) : (
+          <p className="text-neutral-400">
+            {erroEvento
+              ? "Não foi possível carregar a data do evento."
+              : "Carregando data do evento..."}
+          </p>
+        )}
       </motion.div>
 
       {/* GRID */}
@@ -163,8 +209,16 @@ export default function ContadorPage() {
       >
         <InfoCard
           icon={<Calendar size={32} className="text-[#ffc700]" />}
-          titulo="27, 28 e 29 de Novembro"
-          descricao="Sexta a Domingo"
+          titulo={
+            dataEvento
+              ? new Intl.DateTimeFormat("pt-BR", {
+                  day: "2-digit",
+                  month: "long",
+                  timeZone: "America/Sao_Paulo",
+                }).format(dataEvento)
+              : "Data do evento"
+          }
+          descricao="Data definida para o evento"
         />
 
         <InfoCard
