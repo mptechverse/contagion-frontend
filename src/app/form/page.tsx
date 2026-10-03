@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion, Variants } from "framer-motion";
 import Link from "next/link";
@@ -36,9 +36,34 @@ type FormValues = {
   observacoes?: string;
 };
 
+type ValoresEvento = {
+  valor_acampante: number;
+  valor_servo: number;
+};
+
+function extrairValoresEvento(payload: unknown): ValoresEvento | null {
+  if (
+    typeof payload !== "object" ||
+    payload === null ||
+    !("valor_acampante" in payload) ||
+    !("valor_servo" in payload) ||
+    typeof payload.valor_acampante !== "number" ||
+    typeof payload.valor_servo !== "number"
+  ) {
+    return null;
+  }
+
+  return {
+    valor_acampante: payload.valor_acampante,
+    valor_servo: payload.valor_servo,
+  };
+}
+
 export default function Formulario() {
   const [copiado, setCopiado] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [valoresEvento, setValoresEvento] = useState<ValoresEvento | null>(null);
+  const [erroValores, setErroValores] = useState(false);
 
   const chavePix = "47890505000132";
 
@@ -52,12 +77,60 @@ export default function Formulario() {
 
   const tipoSelecionado = watch("tipo");
 
-  const valorInscricao =
+  useEffect(() => {
+    let ativo = true;
+
+    async function carregarValoresEvento() {
+      try {
+        const response = await fetch(
+          "https://contagion-backend.onrender.com/api/inscricoes/evento/"
+        );
+        if (response.status === 404) {
+          if (ativo) setErroValores(true);
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(`Erro ao buscar valores: ${response.status}`);
+        }
+
+        const valores = extrairValoresEvento(await response.json());
+        if (!valores) {
+          throw new Error("A API não retornou valores válidos para o evento.");
+        }
+
+        if (ativo) setValoresEvento(valores);
+      } catch (error) {
+        console.error(error);
+        if (ativo) setErroValores(true);
+      }
+    }
+
+    void carregarValoresEvento();
+
+    return () => {
+      ativo = false;
+    };
+  }, []);
+
+  const valorSelecionado =
     tipoSelecionado === "servo"
-      ? "R$ 100,00"
+      ? valoresEvento?.valor_servo
       : tipoSelecionado === "primeira_vez"
-      ? "R$ 150,00"
-      : "Selecione o tipo de inscrição";
+        ? valoresEvento?.valor_acampante
+        : undefined;
+
+  const valorInscricao =
+    typeof valorSelecionado === "number"
+      ? new Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }).format(valorSelecionado)
+      : tipoSelecionado
+        ? erroValores
+          ? "Valor indisponível"
+          : "Carregando valor..."
+        : "Selecione o tipo de inscrição";
 
   async function copiarPix() {
     try {
@@ -356,7 +429,7 @@ export default function Formulario() {
                 Selecione
               </option>
 
-              <option value="primeira_vez">Primeira vez</option>
+              <option value="primeira_vez">Acampante</option>
 
               <option value="servo">Servo</option>
             </select>
