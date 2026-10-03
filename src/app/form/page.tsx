@@ -33,14 +33,14 @@ type FormValues = {
   origem?: string;
   termos: boolean;
   imagem?: boolean;
+  observacoes?: string;
 };
 
 export default function Formulario() {
-
   const [copiado, setCopiado] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const chavePix = "contagion@pix.com.br";
+  const chavePix = "47890505000132";
 
   const {
     register,
@@ -60,9 +60,7 @@ export default function Formulario() {
       : "Selecione o tipo de inscrição";
 
   async function copiarPix() {
-
     try {
-
       await navigator.clipboard.writeText(chavePix);
 
       setCopiado(true);
@@ -70,11 +68,8 @@ export default function Formulario() {
       setTimeout(() => {
         setCopiado(false);
       }, 2000);
-
     } catch (error) {
-
       console.error(error);
-
       alert("Erro ao copiar chave PIX");
     }
   }
@@ -96,41 +91,55 @@ export default function Formulario() {
             data_nascimento: data.nascimento,
             telefone: data.telefone,
             email: data.email,
-            igreja: data.igreja ? data.nomeIgreja : "",
+
             cidade: data.cidade,
             estado: data.estado,
-            quer_servir: data.querServir || false,
+
             tamanho_camisa: data.camisa,
+
+            quer_servir: data.querServir || false,
+
             participa_igreja: data.igreja || false,
+            igreja: data.igreja ? data.nomeIgreja || "" : "",
             pastor_lider: data.lider || "",
             telefone_lider: data.telefoneLider || "",
             tempo_igreja: data.tempoIgreja || "",
+
             responsavel_nome: data.emergenciaNome,
             telefone_responsavel: data.emergenciaTel,
             parentesco: data.relacao || "",
+
             alergias: data.alergias || "",
             doencas_pre_existentes: data.doencas || "",
             medicamentos_continuos: data.medicamentos || "",
             restricoes_alimentares: data.restricoes || "",
             observacoes_medicas: data.obsMedicas || "",
+
             como_conheceu: data.origem || "",
+
             autoriza_imagem: data.imagem || false,
+
+            observacoes: data.observacoes || "",
           }),
         }
       );
 
       if (!response.ok) {
         const erroText = await response.text();
+
         console.error("Erro da API:", erroText);
+
         alert(
           `Erro ao enviar inscrição (${response.status}). ${
             erroText || "Verifique os dados enviados."
           }`
         );
+
         return;
       }
 
       const resultado = await response.json();
+
       console.log("Inscrição criada com sucesso:", resultado);
 
       alert("Inscrição realizada com sucesso!");
@@ -173,7 +182,6 @@ export default function Formulario() {
 
   return (
     <div className="min-h-screen bg-black text-white px-6 py-20">
-
       <motion.form
         onSubmit={handleSubmit(onSubmit)}
         variants={container}
@@ -181,7 +189,6 @@ export default function Formulario() {
         animate="show"
         className="max-w-5xl mx-auto flex flex-col gap-10"
       >
-
         {/* VOLTAR */}
         <motion.div variants={fadeUp}>
           <Link
@@ -195,15 +202,15 @@ export default function Formulario() {
 
         {/* HEADER */}
         <motion.div variants={fadeUp} className="text-center">
-
-          <h1 className={`${oswald.className} text-4xl md:text-6xl font-bold`}>
+          <h1
+            className={`${oswald.className} text-4xl md:text-6xl font-bold`}
+          >
             CONFIRME SUA <span className="text-[#ffc700]">INSCRIÇÃO</span>
           </h1>
 
           <p className={`${inter.className} text-neutral-400 mt-4`}>
             Preencha os dados abaixo para garantir sua vaga no Acampamento
           </p>
-
         </motion.div>
 
         {/* ======================
@@ -214,16 +221,13 @@ export default function Formulario() {
           variants={fadeUp}
           className="bg-neutral-800/60 p-8 rounded-2xl space-y-6"
         >
-
           <h2 className={`${oswald.className} text-2xl text-[#ffc700]`}>
             Dados pessoais
           </h2>
 
           {/* NOME */}
           <div>
-            <label className={label}>
-              Nome completo *
-            </label>
+            <label className={label}>Nome completo *</label>
 
             <input
               {...register("nome", { required: true })}
@@ -233,11 +237,8 @@ export default function Formulario() {
 
           {/* NASCIMENTO / TELEFONE / EMAIL */}
           <div className="grid md:grid-cols-3 gap-4">
-
             <div>
-              <label className={label}>
-                Data de nascimento *
-              </label>
+              <label className={label}>Data de nascimento *</label>
 
               <input
                 type="date"
@@ -247,9 +248,7 @@ export default function Formulario() {
             </div>
 
             <div>
-              <label className={label}>
-                Telefone *
-              </label>
+              <label className={label}>Telefone *</label>
 
               <input
                 {...register("telefone", { required: true })}
@@ -258,9 +257,7 @@ export default function Formulario() {
             </div>
 
             <div>
-              <label className={label}>
-                Email *
-              </label>
+              <label className={label}>Email *</label>
 
               <input
                 type="email"
@@ -268,16 +265,12 @@ export default function Formulario() {
                 className={input}
               />
             </div>
-
           </div>
 
           {/* CIDADE / ESTADO / CAMISA */}
           <div className="grid md:grid-cols-3 gap-4">
-
             <div>
-              <label className={label}>
-                Cidade *
-              </label>
+              <label className={label}>Cidade *</label>
 
               <input
                 {...register("cidade", { required: true })}
@@ -287,16 +280,13 @@ export default function Formulario() {
             </div>
 
             <div>
-              <label className={label}>
-                Estado *
-              </label>
+              <label className={label}>Estado *</label>
 
               <select
                 {...register("estado", { required: true })}
                 className={input}
                 defaultValue=""
               >
-
                 <option value="" disabled>
                   Selecione
                 </option>
@@ -328,21 +318,17 @@ export default function Formulario() {
                 <option value="SP">São Paulo</option>
                 <option value="SE">Sergipe</option>
                 <option value="TO">Tocantins</option>
-
               </select>
             </div>
 
             <div>
-              <label className={label}>
-                Tamanho da camisa *
-              </label>
+              <label className={label}>Tamanho da camisa *</label>
 
               <select
                 {...register("camisa", { required: true })}
                 className={input}
                 defaultValue=""
               >
-
                 <option value="" disabled>
                   Selecione
                 </option>
@@ -353,119 +339,80 @@ export default function Formulario() {
                 <option value="G">G</option>
                 <option value="GG">GG</option>
                 <option value="XG">XG</option>
-
               </select>
             </div>
-
           </div>
 
           {/* TIPO */}
           <div>
-
-            <label className={label}>
-              Tipo de inscrição *
-            </label>
+            <label className={label}>Tipo de inscrição *</label>
 
             <select
               {...register("tipo", { required: true })}
               className={input}
               defaultValue=""
             >
-
               <option value="" disabled>
                 Selecione
               </option>
 
-              <option value="primeira_vez">
-                Primeira vez
-              </option>
+              <option value="primeira_vez">Primeira vez</option>
 
-              <option value="servo">
-                Servo
-              </option>
-
+              <option value="servo">Servo</option>
             </select>
-
           </div>
 
           {/* QUER SERVIR */}
           <label className="flex gap-3 items-center">
-
-            <input
-              type="checkbox"
-              {...register("querServir")}
-            />
+            <input type="checkbox" {...register("querServir")} />
 
             Deseja servir durante o evento?
-
           </label>
 
           {/* CHECK IGREJA */}
           <label className="flex gap-3 items-center">
-
-            <input
-              type="checkbox"
-              {...register("igreja")}
-            />
+            <input type="checkbox" {...register("igreja")} />
 
             Faz parte de uma igreja ou comunidade local?
-
           </label>
 
           {/* CAMPOS CONDICIONAIS */}
           {participaIgreja && (
-
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               className="space-y-4"
             >
-
               <div>
-
-                <label className={label}>
-                  Nome da igreja
-                </label>
+                <label className={label}>Nome da igreja</label>
 
                 <input
                   {...register("nomeIgreja")}
                   className={input}
                 />
-
               </div>
 
               <div className="grid md:grid-cols-2 gap-4">
-
                 <div>
-
-                  <label className={label}>
-                    Pastor / Líder
-                  </label>
+                  <label className={label}>Pastor / Líder</label>
 
                   <input
                     {...register("lider")}
                     className={input}
                   />
-
                 </div>
 
                 <div>
-
-                  <label className={label}>
-                    Telefone do líder
-                  </label>
+                  <label className={label}>Telefone do líder</label>
 
                   <input
                     {...register("telefoneLider")}
                     className={input}
                   />
-
                 </div>
-
               </div>
 
               <div>
-
                 <label className={label}>
                   Há quanto tempo participa?
                 </label>
@@ -474,12 +421,9 @@ export default function Formulario() {
                   {...register("tempoIgreja")}
                   className={input}
                 />
-
               </div>
-
             </motion.div>
           )}
-
         </motion.div>
 
         {/* ======================
@@ -490,13 +434,11 @@ export default function Formulario() {
           variants={fadeUp}
           className="bg-neutral-800/60 p-8 rounded-2xl space-y-6"
         >
-
           <h2 className={`${oswald.className} text-2xl text-[#ffc700]`}>
             Informações adicionais
           </h2>
 
           <div className="grid md:grid-cols-3 gap-4">
-
             <input
               placeholder="Contato emergência (nome) *"
               {...register("emergenciaNome", { required: true })}
@@ -514,7 +456,6 @@ export default function Formulario() {
               className={input}
               defaultValue=""
             >
-
               <option value="" disabled>
                 Selecione
               </option>
@@ -526,13 +467,10 @@ export default function Formulario() {
               <option>Amigo</option>
               <option>Líder</option>
               <option>Outro</option>
-
             </select>
-
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
-
             <input
               placeholder="Alergias"
               {...register("alergias")}
@@ -544,11 +482,9 @@ export default function Formulario() {
               {...register("doencas")}
               className={input}
             />
-
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
-
             <input
               placeholder="Medicamentos contínuos"
               {...register("medicamentos")}
@@ -560,7 +496,6 @@ export default function Formulario() {
               {...register("restricoes")}
               className={input}
             />
-
           </div>
 
           <textarea
@@ -574,7 +509,6 @@ export default function Formulario() {
             className={input}
             defaultValue=""
           >
-
             <option value="" disabled>
               Como conheceu o CONTAGION 2026?
             </option>
@@ -585,12 +519,15 @@ export default function Formulario() {
             <option>Líder</option>
             <option>Grupo de WhatsApp</option>
             <option>Outro</option>
-
           </select>
 
+          {/* OBSERVAÇÕES */}
+          <textarea
+            placeholder="Observações"
+            {...register("observacoes")}
+            className={`${input} min-h-[120px]`}
+          />
         </motion.div>
-
-        
 
         {/* ======================
            PAGAMENTO
@@ -600,23 +537,18 @@ export default function Formulario() {
           variants={fadeUp}
           className="bg-neutral-800/60 p-8 rounded-2xl space-y-6 border border-[#ffc700]/20"
         >
-
           <h2 className={`${oswald.className} text-2xl text-[#ffc700]`}>
             Pagamento da inscrição
           </h2>
 
-          <div className="  rounded-xl p-6 space-y-6">
-
+          <div className="rounded-xl p-6 space-y-6">
             <div>
-
               <p className="text-neutral-300 leading-relaxed">
                 Mande o valor correspondente da inscrição para o PIX abaixo:
               </p>
-
             </div>
 
             <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-5">
-
               <p className="text-sm text-neutral-400 mb-2">
                 Valor da inscrição
               </p>
@@ -624,17 +556,14 @@ export default function Formulario() {
               <p className="text-3xl font-bold text-[#ffc700]">
                 {valorInscricao}
               </p>
-
             </div>
 
             <div>
-
               <p className="text-sm text-neutral-400 mb-2">
                 Chave PIX
               </p>
 
               <div className="flex flex-col md:flex-row gap-3">
-
                 <div
                   className="
                     flex-1
@@ -668,7 +597,6 @@ export default function Formulario() {
                     gap-2
                   "
                 >
-
                   {copiado ? (
                     <>
                       <Check size={18} />
@@ -680,31 +608,27 @@ export default function Formulario() {
                       Copiar
                     </>
                   )}
-
                 </button>
-
               </div>
-
             </div>
 
             <div className="bg-[#ffc700]/10 border border-[#ffc700]/20 rounded-xl p-4">
-
               <p className="text-neutral-200 leading-relaxed">
-               Após realizar o pagamento, envie:<br/>
-                • o comprovante<br/>
-                • seu nome completo<br/><br/>
-
+                Após realizar o pagamento, envie:
+                <br />
+                • o comprovante
+                <br />
+                • seu nome completo
+                <br />
+                <br />
                 para o número abaixo:
               </p>
 
               <p className="text-[#ffc700] font-bold mt-2 text-lg">
-                (83) 91234-5678
+                  (83) 99816 - 8437 (Kamila Tayna)
               </p>
-
             </div>
-
           </div>
-
         </motion.div>
 
         {/* AUTORIZAÇÕES */}
@@ -712,31 +636,27 @@ export default function Formulario() {
           variants={fadeUp}
           className="space-y-3"
         >
-
           <label className="flex gap-3">
-
             <input
               type="checkbox"
               {...register("termos")}
               required
             />
 
-            Aceito os termos de participação e autorizo o uso dos dados fornecidos.
-
+            Aceito os termos de participação e autorizo o uso dos dados
+            fornecidos.
           </label>
 
           <label className="flex gap-3">
-
             <input
               type="checkbox"
               {...register("imagem")}
             />
 
             Autorizo o uso da minha imagem em fotos e vídeos.
-
           </label>
-
         </motion.div>
+
         {/* BOTÃO */}
         <motion.button
           variants={fadeUp}
@@ -759,8 +679,6 @@ export default function Formulario() {
         >
           {loading ? "ENVIANDO..." : "GARANTIR MINHA VAGA"}
         </motion.button>
-
-
       </motion.form>
     </div>
   );

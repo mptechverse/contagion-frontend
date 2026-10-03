@@ -154,7 +154,7 @@ export default function Hero() {
             tracking-[0.25em]
           `}
         >
-          28, 29 E 30 DE AGOSTO
+          27, 28 E 29 DE NOVEMBRO
         </motion.p>
       </motion.div>
     </div>

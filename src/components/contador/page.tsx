@@ -8,7 +8,7 @@ import { motion, Variants } from "framer-motion";
 export default function ContadorPage() {
   const [mounted, setMounted] = useState(false);
 
-  const dataEvento = new Date("2026-08-28T00:00:00");
+  const dataEvento = new Date("2026-11-22T00:00:00");
 
   const calcularTempo = () => {
     const agora = new Date().getTime();
@@ -163,7 +163,7 @@ export default function ContadorPage() {
       >
         <InfoCard
           icon={<Calendar size={32} className="text-[#ffc700]" />}
-          titulo="28, 29 e 30 de Agosto"
+          titulo="27, 28 e 29 de Novembro"
           descricao="Sexta a Domingo"
         />
 
@@ -175,7 +175,7 @@ export default function ContadorPage() {
 
         <InfoCard
           icon={<CreditCard size={32} className="text-[#ffc700]" />}
-          titulo="Valor do Evento"
+          titulo="Pagamento do Evento"
           descricao="Aceitamos Pix, Cartão de Crédito e Débito"
         />
 
